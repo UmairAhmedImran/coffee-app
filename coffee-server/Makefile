@@ -27,5 +27,19 @@ migrate_up:
 migrate_down:
 	sqlx migrate revert --database-url "postgres://${USER}:${PASSWORD}@${HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable"
 
+build:
+	if [ -f "${BINARY}" ]; then \
+		rm ${BINARY}; \
+		echo "Deleted ${BINARY}"; \
+	fi
+	@echo "Building binary..."
+	go build -o ${BINARY} cmd/server/*.go
 
+run: build
+	./${BINARY}
+#@@echo "api started..."
 
+stop:
+	@echo "stopping server..."
+	@-pkill -SIGTERM -f "./${BINARY}"
+	@echo "server stopped..."
